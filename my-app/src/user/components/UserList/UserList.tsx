@@ -1,6 +1,6 @@
 import React from "react";
 
-import UserItem, {IUserItem} from './UserItem';
+import UserItem, {IUserItem} from '../UserItem/UserItem';
 import './UserList.css';
 
 export interface IUserList extends Array<IUserItem>{}
