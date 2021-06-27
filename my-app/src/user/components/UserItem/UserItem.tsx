@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import './UserItem.css';
 import Avatar from "../../../shared/components/UIElements/Avatar/Avatar";
-import Card from "../../../shared/components/Card/Card";
+import Card from "../../../shared/components/UIElements/Card/Card";
 
 export interface IUserItem {
     id: string,
@@ -13,7 +13,6 @@ export interface IUserItem {
 }
 
 function UserItem(props:IUserItem){
-    console.log('hello');
     return(
         <li className="user-item">
                 <Card className="user-item__content">

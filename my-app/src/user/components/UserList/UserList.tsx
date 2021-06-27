@@ -1,4 +1,5 @@
 import React from "react";
+import Card from "../../../shared/components/UIElements/Card/Card";
 
 import UserItem, {IUserItem} from '../UserItem/UserItem';
 import './UserList.css';
@@ -14,7 +15,7 @@ function UserList (props:IUserListInput){
     if (props.items.length === 0){
         return (
             <div className="center">
-                <h2>No Users found</h2>
+                <Card><h2>No Users found</h2></Card>
             </div>
         )
     }
@@ -22,6 +23,7 @@ function UserList (props:IUserListInput){
         <ul className="users-list">
             {props.items.map(user => 
                 <UserItem 
+                key={user.id}
                 id={user.id}
                 image={user.image}
                 name={user.name}
