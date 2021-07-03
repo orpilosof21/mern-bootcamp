@@ -31,8 +31,7 @@ const Map = (props:IMap) => {
           });
         
         const marker = new window.google.maps.Marker({ position: center, map: map });
-        console.log(map);
-        console.log(marker);
+        console.log(mapRef.current);
     }
 
     useEffect(() => {
@@ -40,7 +39,7 @@ const Map = (props:IMap) => {
       }, [center, zoom]);  
 
     return(
-        <div ref={mapRef} className={`map ${props.name}`} style={props.style}>
+        <div id="map" ref={mapRef} className={`map ${props.name}`} style={props.style}>
         </div>
     );
 }
