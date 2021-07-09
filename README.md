@@ -1,6 +1,4 @@
 # mern-bootcamp
-<br>
-<br>
 Progress: 28%
 <br>
 <br>
