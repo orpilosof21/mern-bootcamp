@@ -1,14 +1,14 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties } from "react";
 
-import './Avatar.css';
+import "./Avatar.css";
 
 export interface IAvatar {
-    className?: string,
-    style?: CSSProperties,
-    image: string,
-    alt?: string,
-    width?: number,
-    height?: number
+  className?: string;
+  style?: CSSProperties;
+  image: string;
+  alt?: string;
+  width?: number;
+  height?: number;
 }
 
 const Avatar = (props: IAvatar) => {

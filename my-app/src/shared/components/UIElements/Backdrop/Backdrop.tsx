@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import './Backdrop.css';
+import "./Backdrop.css";
 
 export interface IBackdrop {
-    onClick: ()=>void
+  onClick: () => void;
 }
 
-const Backdrop = (props:IBackdrop) => {
+const Backdrop = (props: IBackdrop) => {
   return <div className="backdrop" onClick={props.onClick}></div>;
 };
 
