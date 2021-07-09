@@ -52,9 +52,11 @@ const inputReader = (state:ActionState, action:Action) : ActionState => {
   }
 }
 
+const initializer = { value: '', isValid: false, isTouched: false };
+
 const Input = (props:IInput) => {
   // {value: '', isValid: false}
-  const [inputState, dispatch] = useReducer(inputReader, {value: '', isValid: false, isTouched: false});
+  const [inputState, dispatch] = useReducer(inputReader, initializer);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     dispatch({type: 'CHANGE', val: event.currentTarget.value as string, validators: props.validators});
@@ -70,11 +72,15 @@ const Input = (props:IInput) => {
       <textarea id={props.id} rows={props.rows || 3} onChange={changeHandler} onBlur={touchHandler} value={inputState.value}/>
     );
 
-    return <div className={`form-control ${!inputState.isValid && inputState.isTouched && 'form-control--invalid'}`}>
+    return <div className={`form-control ${checkInputState(inputState) && 'form-control--invalid'}`}>
         <label htmlFor={props.id}>{props.label}</label>
         {element}
-        {!inputState.isValid && inputState.isTouched && <p>{props.errorText || defaultErrorText}</p>}
+        {checkInputState(inputState) && <p>{props.errorText || defaultErrorText}</p>}
     </div>
 };
 
 export default Input;
+
+function checkInputState(inputState: ActionState) {
+  return !inputState.isValid && inputState.isTouched;
+}
