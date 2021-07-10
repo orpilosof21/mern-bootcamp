@@ -6,32 +6,36 @@ import "./Input.css";
 
 interface IInput {
   element: string;
-  id?: string;
+  id: string;
   type?: string;
   placeholder?: string;
   rows?: number;
   label: string;
   errorText?: string;
   validators?: any;
+  onInput: (arg0: string, arg1: string, arg2: boolean) => void;
 }
 
-type ActionType = "CHANGE" | "TOUCH";
+type InputActionType = "CHANGE" | "TOUCH";
 
-interface ActionState {
+export interface InputActionState {
   value: string;
   isValid: boolean;
-  isTouched: boolean;
+  isTouched?: boolean;
 }
 
-interface Action {
-  type: ActionType;
+interface InputAction {
+  type: InputActionType;
   val?: string;
   validators?: any;
 }
 
 const defaultErrorText = "ERROR";
 
-const inputReader = (state: ActionState, action: Action): ActionState => {
+const inputReader = (
+  state: InputActionState,
+  action: InputAction
+): InputActionState => {
   switch (action.type) {
     case "CHANGE":
       return {
@@ -52,8 +56,13 @@ const inputReader = (state: ActionState, action: Action): ActionState => {
 const initializer = { value: "", isValid: false, isTouched: false };
 
 const Input = (props: IInput) => {
-  // {value: '', isValid: false}
   const [inputState, dispatch] = useReducer(inputReader, initializer);
+  const { id, onInput } = props;
+  const { value, isValid } = inputState;
+
+  useEffect(() => {
+    props.onInput(props.id, inputState.value, inputState.isValid);
+  }, [id, value, isValid, onInput]);
 
   const changeHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -106,6 +115,6 @@ const Input = (props: IInput) => {
 
 export default Input;
 
-function checkInputState(inputState: ActionState) {
+function checkInputState(inputState: InputActionState) {
   return !inputState.isValid && inputState.isTouched;
 }
