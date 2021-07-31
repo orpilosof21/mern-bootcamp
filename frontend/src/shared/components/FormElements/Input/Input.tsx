@@ -1,4 +1,3 @@
-import { type } from "os";
 import React, { useReducer, useEffect } from "react";
 import { validate } from "../../../Utils/validators";
 
@@ -13,6 +12,8 @@ interface IInput {
   label: string;
   errorText?: string;
   validators?: any;
+  value?: string;
+  valid?: boolean;
   onInput: (arg0: string, arg1: string, arg2: boolean) => void;
 }
 
@@ -53,9 +54,13 @@ const inputReader = (
   }
 };
 
-const initializer = { value: "", isValid: false, isTouched: false };
-
 const Input = (props: IInput) => {
+  const initializer = {
+    value: props.value || "",
+    isValid: props.valid || false,
+    isTouched: false,
+  };
+
   const [inputState, dispatch] = useReducer(inputReader, initializer);
   const { id, onInput } = props;
   const { value, isValid } = inputState;
