@@ -1,9 +1,9 @@
 import { useCallback, useReducer } from "react";
-import { NewPlaceAction, NewPlaceActionState } from "../../places/pages/NewPlace/NewPlace";
+import { PlaceAction, PlaceActionState } from "../../places/pages/Utils/Actions/PlacesActions";
 
 const formReducer = (
-    state: NewPlaceActionState,
-    action: NewPlaceAction
+    state: PlaceActionState,
+    action: PlaceAction
   ): any => {
     switch (action.type) {
       case "INPUT_CHANGE":
@@ -19,10 +19,15 @@ const formReducer = (
           ...state,
           inputs: {
             ...state.inputs,
-            [action.inputId]: { value: action.value, isValid: action.isValid },
+            [action.inputId || '']: { value: action.value, isValid: action.isValid },
           },
           isValid: formIsValid,
         };
+      case 'SET_DATA':
+          return {
+            inputs: action.inputs,
+            isValid: action.formIsValid,
+          };
       default:
         return state;
     }
@@ -46,5 +51,13 @@ export const useForm = (initInput:any, initFormValid:boolean) => {
       },
       []);
 
-    return [formState, inputHandler];
+    const setFormData = useCallback((inputData:any, formValidity:boolean) => {
+      dispatch({
+        type: 'SET_DATA',
+        inputs: {...inputData},
+        isValid: formValidity
+      });
+    }, []);
+
+    return [formState, inputHandler, setFormData];
 };

@@ -31,7 +31,6 @@ const Map = (props: IMap) => {
       position: center,
       map: map,
     });
-    console.log(mapRef.current);
   }
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import React from "react";
 import "./Backdrop.css";
 
 export interface IBackdrop {
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const Backdrop = (props: IBackdrop) => {

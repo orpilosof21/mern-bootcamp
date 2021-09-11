@@ -8,14 +8,14 @@ export interface IModal {
   className?: string;
   style?: CSSProperties;
   headerClass?: string;
-  header: string;
+  header?: string;
   onSubmit?: () => void;
   contentClass?: string;
   footerClass?: string;
-  footer: React.ReactNode;
+  footer?: React.ReactNode;
   children?: React.ReactNode;
-  show: boolean;
-  onCancel: () => void;
+  show?: boolean;
+  onCancel?: () => void;
   innerRef?: any;
 }
 

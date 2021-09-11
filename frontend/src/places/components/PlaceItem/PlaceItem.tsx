@@ -3,7 +3,9 @@ import Map from "../../../shared/components/UIElements/Map/Map";
 import Button from "../../../shared/components/FormElements/Button/Button";
 
 import Card from "../../../shared/components/UIElements/Card/Card";
-import Modal from "../../../shared/components/UIElements/Modal/Modal";
+import Modal, {
+  IModal,
+} from "../../../shared/components/UIElements/Modal/Modal";
 import "./PlaceItem.css";
 
 export interface IPlaceItem {
@@ -21,25 +23,48 @@ export interface IPlaceItem {
 
 const PlaceItem = (props: IPlaceItem) => {
   const [showMap, setShowMap] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
+  const showDeleteWarningHandler = () => setShowConfirmModal(true);
+  const cancelDeleteHandler = () => setShowConfirmModal(false);
+  const confirmDeleteHandler = () => {
+    console.log("DELETING...");
+  };
 
-  const _overlayData = {
+  const _overlayData: Partial<IModal> = {
     header: props.address,
     contentClass: "place-item__modal-content",
     footerClass: "place-item__modal-actions",
     footer: <Button onClick={closeMapHandler}>Close</Button>,
+  };
+  const _deleteModalData: Partial<IModal> = {
+    show: showConfirmModal,
+    onCancel: cancelDeleteHandler,
+    header: "Are you sure?",
+    footerClass: "place-item__modal-actions",
+    footer: (
+      <>
+        <Button inverse onClick={cancelDeleteHandler}>
+          CANCEL
+        </Button>
+        <Button danger onClick={confirmDeleteHandler}>
+          DELETE
+        </Button>
+      </>
+    ),
   };
 
   return (
     <React.Fragment>
       <Modal show={showMap} onCancel={closeMapHandler} {..._overlayData}>
         <div className="map-container">
-          {console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")}
           <Map center={props.location} zoom={16} />
-          {console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")}
         </div>
+      </Modal>
+      <Modal {..._deleteModalData}>
+        <p>Do you want to proceed and delete this place?</p>
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
@@ -56,7 +81,9 @@ const PlaceItem = (props: IPlaceItem) => {
               VIEW ON MAP
             </Button>
             <Button to={`/places/${props.id}`}>EDIT</Button>
-            <Button danger>DELETE</Button>
+            <Button danger onClick={showDeleteWarningHandler}>
+              DELETE
+            </Button>
           </div>
         </Card>
       </li>

@@ -1,6 +1,4 @@
-import Input, {
-  InputActionState,
-} from "../../../shared/components/FormElements/Input/Input";
+import Input from "../../../shared/components/FormElements/Input/Input";
 import Button from "../../../shared/components/FormElements/Button/Button";
 import { newPlaceText } from "../../../shared/Utils/uiText";
 import {
@@ -10,27 +8,6 @@ import {
 
 import { useForm } from "../../../shared/hooks/form-hook";
 import "../PlaceForm.css";
-import { IObjectKeys } from "../../../shared/Utils/object";
-
-type NewPlaceActionType = "INPUT_CHANGE";
-
-interface NewPlacesInputEntries extends IObjectKeys<InputActionState> {
-  title: InputActionState;
-  description: InputActionState;
-  address: InputActionState;
-}
-
-export interface NewPlaceActionState {
-  inputs: NewPlacesInputEntries;
-  isValid: boolean;
-}
-
-export interface NewPlaceAction {
-  type: NewPlaceActionType;
-  isValid: boolean;
-  value: string;
-  inputId: string;
-}
 
 const defaultInput = {
   title: { value: "", isValid: false },
