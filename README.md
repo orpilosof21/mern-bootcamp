@@ -1,11 +1,11 @@
 # mern-bootcamp
 #### Progress<br>
-![28](https://progress-bar.dev/28/)
+![37](https://progress-bar.dev/37/)
 <br>
 <br>
 #### Main features:
 
-- [ ] Frontend
+- [X] Frontend
 - [ ] Backend
 - [ ] Connecting db to Backend
 - [ ] Connecting Backend to Frontend
