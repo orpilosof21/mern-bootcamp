@@ -13,4 +13,6 @@ export const routePrefix = {
     EmptyRoute: '/',
     ApiRoute: '/api',
     PlacesRoute: '/api/places',
+    UsersRoute: '/api/users',
+    UserRoute: '/user',
 }
