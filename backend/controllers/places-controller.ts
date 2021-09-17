@@ -1,5 +1,7 @@
 import { HttpError } from "../models/http-error";
 import express, { Request, Response, NextFunction } from 'express';
+import { FindByProp } from "./utils";
+import { v4 as uuid_v4 } from "uuid";
 
 const DUMMY_PLACES = [
     {
@@ -15,9 +17,21 @@ const DUMMY_PLACES = [
     }
   ];
 
+  interface IPlaceData {
+    title: string,
+    description: string,
+    location: {
+      lat: number;
+      lng: number;
+    },
+    address: string,
+    creator: string
+  }
+
+//#region GET
 export function getPlaceById (req:Request,res:Response,next:NextFunction){
     const placeId = req.params.pid;
-    const place = DUMMY_PLACES.find(p => {return p.id===placeId});
+    const place = FindByProp(DUMMY_PLACES,placeId,'id');
     if(!place){
         const err = new HttpError('Could not find a place for the provided place id.',404);
         return next(err);
@@ -28,8 +42,7 @@ export function getPlaceById (req:Request,res:Response,next:NextFunction){
 
 export function getPlaceByUserId(req:Request,res:Response,next:NextFunction) {
     const userId = req.params.uid;
-    const place = DUMMY_PLACES.find(p => {return p.creator===userId});
-
+    const place = FindByProp(DUMMY_PLACES,userId,'creator');
     if(!place){
         const err = new HttpError('Could not find a place for the provided user id.',404);
         return next(err);
@@ -37,3 +50,16 @@ export function getPlaceByUserId(req:Request,res:Response,next:NextFunction) {
 
     res.json({place});
 }
+//#endregion
+
+//#region  POST
+export function createPlace(req:Request,res:Response,next:NextFunction) {
+  const {...createdPlace}: IPlaceData = req.body;
+
+  DUMMY_PLACES.push({id: uuid_v4(), ...createdPlace});
+  console.log(DUMMY_PLACES);
+
+  res.status(201).json({place: {id: uuid_v4(), ...createdPlace}});
+  
+}
+//#endregion

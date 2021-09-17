@@ -6,6 +6,7 @@ import { HttpError } from './models/http-error';
 const app = express();
 const PORT = 8000;
 
+app.use(express.json());
 app.use(routePrefix.PlacesRoute,routes.PlacesRoute);
 
 app.use((error:HttpError, req: Request, res: Response, next: NextFunction) => {
