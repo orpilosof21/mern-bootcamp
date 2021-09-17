@@ -1,6 +1,6 @@
 # mern-bootcamp
 #### Progress<br>
-![37](https://progress-bar.dev/37/)
+![45](https://progress-bar.dev/45/)
 <br>
 <br>
 #### Main features:
