@@ -1,9 +1,9 @@
 import { HttpError } from "../models/http-error";
 import express, { Request, Response, NextFunction } from 'express';
-import { FindByProp } from "./utils";
+import { FilterByProp, FindByProp, GetCopyByProp, GetIndexById, RemoveById } from "./utils";
 import { v4 as uuid_v4 } from "uuid";
 
-const DUMMY_PLACES = [
+let DUMMY_PLACES : IPlaceData[] = [
     {
       id: 'p1',
       title: 'Empire State Building',
@@ -17,7 +17,8 @@ const DUMMY_PLACES = [
     }
   ];
 
-  interface IPlaceData {
+  export interface IPlaceData {
+    id?: string,
     title: string,
     description: string,
     location: {
@@ -27,6 +28,8 @@ const DUMMY_PLACES = [
     address: string,
     creator: string
   }
+
+  type IPlaceUpdateData = Omit<IPlaceData, "location"|"address"|"creator">;
 
 //#region GET
 export function getPlaceById (req:Request,res:Response,next:NextFunction){
@@ -40,26 +43,44 @@ export function getPlaceById (req:Request,res:Response,next:NextFunction){
     res.json({place});
 }
 
-export function getPlaceByUserId(req:Request,res:Response,next:NextFunction) {
+export function getPlacesByUserId(req:Request,res:Response,next:NextFunction) {
     const userId = req.params.uid;
-    const place = FindByProp(DUMMY_PLACES,userId,'creator');
-    if(!place){
+    const places = FilterByProp(DUMMY_PLACES,userId,'creator');
+    if(!places || places.length === 0){
         const err = new HttpError('Could not find a place for the provided user id.',404);
         return next(err);
     }
 
-    res.json({place});
+    res.json({places: places});
 }
 //#endregion
 
 //#region  POST
 export function createPlace(req:Request,res:Response,next:NextFunction) {
   const {...createdPlace}: IPlaceData = req.body;
-
-  DUMMY_PLACES.push({id: uuid_v4(), ...createdPlace});
-  console.log(DUMMY_PLACES);
-
+  DUMMY_PLACES.push({id: uuid_v4().toString(), ...createdPlace});
   res.status(201).json({place: {id: uuid_v4(), ...createdPlace}});
+}
+//#endregion
+
+//#region PATCH
+export function updatePlaceById(req:Request,res:Response,next:NextFunction){
+  const {...reqData}: IPlaceUpdateData = req.body;
+  const placeId= req.params.pid;
+  let updatePlace : IPlaceData = GetCopyByProp(DUMMY_PLACES,placeId,'id');
+  const placeIndex = GetIndexById(DUMMY_PLACES,placeId);
   
+  updatePlace = {...updatePlace, ...reqData }
+  DUMMY_PLACES[placeIndex] = updatePlace;
+
+  res.status(200).json({place: updatePlace});
+}
+//#endregion
+
+//#region DELETE
+export function removePlaceById(req:Request,res:Response,next:NextFunction){
+  const placeId= req.params.pid;
+  DUMMY_PLACES = RemoveById(DUMMY_PLACES,placeId);
+  res.status(200).json({message: "Delete place."})
 }
 //#endregion
