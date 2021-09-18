@@ -1,13 +1,10 @@
 import { HttpError } from "../models/http-error";
-import express, { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
-  FilterByProp,
-  FindByProp,
-  GetCopyByProp,
-  GetIndexById,
-  RemoveById,
-} from "./utils";
+  FindByProp, inputErrorCheck,
+} from "./controllerUtils";
 import { v4 as uuid_v4 } from "uuid";
+import { validationResult } from "express-validator";
 
 const DUMMY_USERS: IUserData[] = [
   {
@@ -39,6 +36,8 @@ export function createAndLogUser(
   res: Response,
   next: NextFunction
 ) {
+  const errors = validationResult(req);
+  inputErrorCheck(errors);
   const { ...reqData }: IUserData = req.body;
 
   const identifiedUser: IUserData = FindByProp(

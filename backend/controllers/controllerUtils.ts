@@ -1,6 +1,11 @@
+import { NextFunction } from "express";
+import { Result, ValidationError } from "express-validator";
+import { nextTick } from "process";
+import { HttpError } from "../models/http-error";
 import { IPlaceData } from "./places-controller";
+import { IUserData } from "./users-controller";
 
-type dataType = IPlaceData;
+type dataType = IPlaceData | IUserData;
 
 export function RemoveById(data: dataType[], toMatch: string) {
   return data.filter((p) => p.id !== toMatch);
@@ -39,3 +44,13 @@ function Find(data: any[], predicate: (arg0: any) => boolean) {
 function Filter(data: any[], predicate: (arg0: any) => boolean) {
   return data.filter(predicate);
 }
+
+export function inputErrorCheck(errors: Result<ValidationError>, next?:NextFunction) {
+    if (!errors.isEmpty()) {
+        const err = new HttpError('Invalid inputs passed, please check your data.', 422);
+        if (next){
+            return next(err);
+        }
+      throw err;;
+    }
+  }
