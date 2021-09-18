@@ -76,18 +76,21 @@ export function getPlacesByUserId(
 //#endregion
 
 //#region  POST
-export async function createPlace(req: Request, res: Response, next: NextFunction) {
+export async function createPlace(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const errors = validationResult(req);
-  inputErrorCheck(errors,next);
+  inputErrorCheck(errors, next);
   const { ...createdPlace }: IPlaceData = req.body;
 
   let coordinates;
-  if (!createdPlace.location){
-    try{
+  if (!createdPlace.location) {
+    try {
       coordinates = await getLoactionForAddress(createdPlace.address);
-      createdPlace.location=coordinates;
-    }
-    catch(error:unknown){
+      createdPlace.location = coordinates;
+    } catch (error: unknown) {
       return next(error);
     }
   }
@@ -95,7 +98,6 @@ export async function createPlace(req: Request, res: Response, next: NextFunctio
   DUMMY_PLACES.push({ id: uuid_v4().toString(), ...createdPlace });
   res.status(201).json({ place: { id: uuid_v4(), ...createdPlace } });
 }
-
 
 //#endregion
 
@@ -126,8 +128,8 @@ export function removePlaceById(
   next: NextFunction
 ) {
   const placeId = req.params.pid;
-  if (!FindByProp(DUMMY_PLACES,placeId,'id')){
-    throw new HttpError('Could not find a place for that id',404);
+  if (!FindByProp(DUMMY_PLACES, placeId, "id")) {
+    throw new HttpError("Could not find a place for that id", 404);
   }
   DUMMY_PLACES = RemoveById(DUMMY_PLACES, placeId) as IPlaceData[];
   res.status(200).json({ message: "Delete place." });

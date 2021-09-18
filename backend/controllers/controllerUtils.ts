@@ -45,12 +45,18 @@ function Filter(data: any[], predicate: (arg0: any) => boolean) {
   return data.filter(predicate);
 }
 
-export function inputErrorCheck(errors: Result<ValidationError>, next?:NextFunction) {
-    if (!errors.isEmpty()) {
-        const err = new HttpError('Invalid inputs passed, please check your data.', 422);
-        if (next){
-            return next(err);
-        }
-      throw err;;
+export function inputErrorCheck(
+  errors: Result<ValidationError>,
+  next?: NextFunction
+) {
+  if (!errors.isEmpty()) {
+    const err = new HttpError(
+      "Invalid inputs passed, please check your data.",
+      422
+    );
+    if (next) {
+      return next(err);
     }
+    throw err;
   }
+}

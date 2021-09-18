@@ -1,15 +1,19 @@
 # mern-bootcamp
+
 #### Progress<br>
-![37](https://progress-bar.dev/37/)
+
+![50](https://progress-bar.dev/50/)
 <br>
 <br>
+
 #### Main features:
 
-- [X] Frontend
-- [ ] Backend
+- [x] Frontend
+- [x] Backend
 - [ ] Connecting db to Backend
 - [ ] Connecting Backend to Frontend
 
 #### Extra features:
+
 - [ ] File Upload
 - [ ] Authentication

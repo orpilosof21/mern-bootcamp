@@ -10,8 +10,12 @@ const router = Router();
 
 //#region Validators
 const Validators = {
-    signupUserValidator: [check("name").not().isEmpty(), check('email').normalizeEmail().isEmail(), check('password').isLength({min: 6})]
-}
+  signupUserValidator: [
+    check("name").not().isEmpty(),
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 6 }),
+  ],
+};
 //#endregion
 
 //#region GET

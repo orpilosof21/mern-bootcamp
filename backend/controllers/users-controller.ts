@@ -1,8 +1,6 @@
 import { HttpError } from "../models/http-error";
 import { Request, Response, NextFunction } from "express";
-import {
-  FindByProp, inputErrorCheck,
-} from "./controllerUtils";
+import { FindByProp, inputErrorCheck } from "./controllerUtils";
 import { v4 as uuid_v4 } from "uuid";
 import { validationResult } from "express-validator";
 

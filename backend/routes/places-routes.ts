@@ -12,9 +12,16 @@ const router = Router();
 
 //#region Validators
 const Validators = {
-    createPlaceValidator: [check("title").not().isEmpty(), check('description').isLength({ min: 5 }), check('address').not().isEmpty()],
-    updatePlaceValidator: [check("title").not().isEmpty(), check('description').isLength({ min: 5 })],
-}
+  createPlaceValidator: [
+    check("title").not().isEmpty(),
+    check("description").isLength({ min: 5 }),
+    check("address").not().isEmpty(),
+  ],
+  updatePlaceValidator: [
+    check("title").not().isEmpty(),
+    check("description").isLength({ min: 5 }),
+  ],
+};
 //#endregion
 
 //#region GET
@@ -24,11 +31,11 @@ router.get("/users/:uid", getPlacesByUserId);
 //#endregion
 
 //#region POST
-router.post("/",Validators.createPlaceValidator,createPlace);
+router.post("/", Validators.createPlaceValidator, createPlace);
 //#endregion
 
 //#region PATCH
-router.patch("/:pid",Validators.updatePlaceValidator ,updatePlaceById);
+router.patch("/:pid", Validators.updatePlaceValidator, updatePlaceById);
 //#endregion
 
 //#region DELETE
