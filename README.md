@@ -2,7 +2,7 @@
 
 #### Progress<br>
 
-![50](https://progress-bar.dev/50/)
+![58](https://progress-bar.dev/58/)
 <br>
 <br>
 
@@ -17,3 +17,7 @@
 
 - [ ] File Upload
 - [ ] Authentication
+
+#### Refactor:
+- [ ] Create User-Class and refactor to code
+- [ ] Create Place-Class and refactor to code
