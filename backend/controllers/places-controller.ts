@@ -11,7 +11,27 @@ import {
 import { v4 as uuid_v4 } from "uuid";
 import { validationResult } from "express-validator";
 import { getLoactionForAddress } from "../util/location";
-import { AxiosError } from "axios";
+import moongoose from 'mongoose';
+import Place from "../models/place";
+
+
+
+
+export interface IPlaceData {
+  id?: string;
+  title: string;
+  description: string;
+  location?: {
+    lat: number;
+    lng: number;
+  };
+  address: string;
+  creator: string;
+  image?: string;
+}
+
+type IPlaceUpdateData = Omit<IPlaceData, "location" | "address" | "creator">;
+
 
 let DUMMY_PLACES: IPlaceData[] = [
   {
@@ -24,23 +44,9 @@ let DUMMY_PLACES: IPlaceData[] = [
     },
     address: "20 W 34th St, New York, NY 10001",
     creator: "u1",
+    image:'',
   },
 ];
-
-export interface IPlaceData {
-  id?: string;
-  title: string;
-  description: string;
-  location?: {
-    lat: number;
-    lng: number;
-  };
-  address: string;
-  creator: string;
-}
-
-type IPlaceUpdateData = Omit<IPlaceData, "location" | "address" | "creator">;
-
 //#region GET
 export function getPlaceById(req: Request, res: Response, next: NextFunction) {
   const placeId = req.params.pid;
@@ -83,21 +89,35 @@ export async function createPlace(
 ) {
   const errors = validationResult(req);
   inputErrorCheck(errors, next);
-  const { ...createdPlace }: IPlaceData = req.body;
+  const { ...createdPlaceData }: IPlaceData = req.body;
 
   let coordinates;
-  if (!createdPlace.location) {
+  if (!createdPlaceData.location) {
     try {
-      coordinates = await getLoactionForAddress(createdPlace.address);
-      createdPlace.location = coordinates;
+      coordinates = await getLoactionForAddress(createdPlaceData.address);
+      createdPlaceData.location = coordinates;
     } catch (error: unknown) {
       return next(error);
     }
   }
+  const createdPlace = new Place({
+    ...createdPlaceData,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg',
+  });
+  
+  try {
+    await createdPlace.save();
+  } catch (err) {
+    console.log(err);
+    return next(new HttpError(
+      'Creating place failed, please try again.',
+      500
+    ));
+  }
+  
+  res.status(201).json({ place: createdPlace });
+};
 
-  DUMMY_PLACES.push({ id: uuid_v4().toString(), ...createdPlace });
-  res.status(201).json({ place: { id: uuid_v4(), ...createdPlace } });
-}
 
 //#endregion
 

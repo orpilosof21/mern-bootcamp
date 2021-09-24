@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { routePrefix, routes } from "./routes/routesUtils";
 import { HttpError } from "./models/http-error";
-
+import mongoose from 'mongoose';
 const app = express();
 const PORT = 8000;
 app.use(express.json());
@@ -25,5 +25,10 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 //#endregion
+mongoose.connect('mongodb://localhost:27017/MERN?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false').then(() => {
+  console.log('Connection to db is OK');
+  app.listen(PORT);
+}).catch(err => {
+  console.log(err);
+});
 
-app.listen(PORT);
