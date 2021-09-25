@@ -1,17 +1,10 @@
 import { HttpError } from "../models/http-error";
 import { Request, Response, NextFunction } from "express";
 import {
-  FilterByProp,
-  FindByProp,
-  GetCopyByProp,
-  GetIndexById,
   inputErrorCheck,
-  RemoveById,
 } from "./controllerUtils";
-import { v4 as uuid_v4 } from "uuid";
 import { validationResult } from "express-validator";
 import { getLoactionForAddress } from "../util/location";
-import moongoose from 'mongoose';
 import Place from "../models/place";
 
 
@@ -20,7 +13,7 @@ import Place from "../models/place";
 export interface IPlaceData {
   id?: string;
   title: string;
-  description: string;
+  description?: string;
   location?: {
     lat: number;
     lng: number;
@@ -33,20 +26,6 @@ export interface IPlaceData {
 type IPlaceUpdateData = Omit<IPlaceData, "location" | "address" | "creator">;
 
 
-let DUMMY_PLACES: IPlaceData[] = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    location: {
-      lat: 40.7484474,
-      lng: -73.9871516,
-    },
-    address: "20 W 34th St, New York, NY 10001",
-    creator: "u1",
-    image:'',
-  },
-];
 //#region GET
 export async function getPlaceById(req: Request, res: Response, next: NextFunction) {
   const placeId = req.params.pid;
@@ -141,7 +120,7 @@ export async function createPlace(
 //#endregion
 
 //#region PATCH
-export function updatePlaceById(
+export async function updatePlaceById(
   req: Request,
   res: Response,
   next: NextFunction
@@ -150,27 +129,33 @@ export function updatePlaceById(
   inputErrorCheck(errors);
   const { ...reqData }: IPlaceUpdateData = req.body;
   const placeId = req.params.pid;
-  let updatePlace: IPlaceData = GetCopyByProp(DUMMY_PLACES, placeId, "id");
-  const placeIndex = GetIndexById(DUMMY_PLACES, placeId);
 
-  updatePlace = { ...updatePlace, ...reqData };
-  DUMMY_PLACES[placeIndex] = updatePlace;
+  try{
+    await Place.findByIdAndUpdate(placeId,{...reqData });
 
-  res.status(200).json({ place: updatePlace });
+  }
+  catch(error){
+    return next(new HttpError('Something went wrong',500));
+  }
+
+  res.status(200).json({place: placeId, update_value: {...reqData}});
 }
 //#endregion
 
 //#region DELETE
-export function removePlaceById(
+export async function removePlaceById(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const placeId = req.params.pid;
-  if (!FindByProp(DUMMY_PLACES, placeId, "id")) {
-    throw new HttpError("Could not find a place for that id", 404);
+  try{
+    await Place.findByIdAndDelete(placeId);
+
   }
-  DUMMY_PLACES = RemoveById(DUMMY_PLACES, placeId) as IPlaceData[];
+  catch(error){
+    return next(new HttpError('Something went wrong',500));
+  }
   res.status(200).json({ message: "Delete place." });
 }
 //#endregion
