@@ -2,8 +2,8 @@ import { Router } from "express";
 import { check } from "express-validator";
 import {
   getUsersList,
-  createAndLogUser,
   logInUser,
+  signup,
 } from "../controllers/users-controller";
 
 const router = Router();
@@ -23,7 +23,7 @@ router.get("/", getUsersList);
 //#endregion
 
 //#region POST
-router.post("/signup", Validators.signupUserValidator, createAndLogUser);
+router.post("/signup", Validators.signupUserValidator, signup);
 router.post("/login", logInUser);
 //#endregion
 
