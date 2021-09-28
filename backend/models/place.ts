@@ -1,7 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 import { IPlaceData } from "../controllers/places-controller";
+import User from "./user";
 
-const placeSchema = new Schema({
+
+const placeSchema:Schema = new Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
     image: {type: String, required: true},
@@ -10,7 +12,7 @@ const placeSchema = new Schema({
       lat: {type: Number, required: true},
       lng: {type: Number, required: true},
     },
-    creator: {type: String, required: true}
+    creator: {type: mongoose.Types.ObjectId, required: true, ref: 'User'}
 });
 
 const Place = mongoose.model<IPlaceData>('Place',placeSchema);

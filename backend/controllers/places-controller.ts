@@ -1,11 +1,14 @@
 import { HttpError } from "../models/http-error";
 import { Request, Response, NextFunction } from "express";
 import {
-  inputErrorCheck,
+  inputErrorCheck, RemoveById,
 } from "./controllerUtils";
 import { validationResult } from "express-validator";
 import { getLoactionForAddress } from "../util/location";
 import Place from "../models/place";
+import User from "../models/user";
+import mongoose from "mongoose";
+
 
 
 
@@ -30,6 +33,8 @@ type IPlaceUpdateData = Omit<IPlaceData, "location" | "address" | "creator">;
 export async function getPlaceById(req: Request, res: Response, next: NextFunction) {
   const placeId = req.params.pid;
   let place;
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  console.log(placeId);
 
   try{
      
@@ -102,9 +107,33 @@ export async function createPlace(
     ...createdPlaceData,
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg',
   });
+
+  let user;
   
   try {
-    await createdPlace.save();
+    user = await User.findById(createdPlaceData.creator);
+  } catch (err) {
+    console.log(err);
+    return next(new HttpError(
+      'Creating place failed, please try again.',
+      500
+    ));
+  }
+
+  if(!user){
+    return next(new HttpError(
+      'Could not find user with provided ID.',
+      404
+    ));
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({session:sess});
+    user.places?.push(createdPlace);
+    await user.save({session:sess});
+    await sess.commitTransaction();
   } catch (err) {
     console.log(err);
     return next(new HttpError(
@@ -148,10 +177,17 @@ export async function removePlaceById(
   res: Response,
   next: NextFunction
 ) {
+
   const placeId = req.params.pid;
   try{
-    await Place.findByIdAndDelete(placeId);
-
+    const place = await Place.findById(placeId).populate('creator');
+    const user = await User.findById(place?.creator);
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await place?.remove({session:sess});
+    user!.places = RemoveById(user?.places,place?.id) as IPlaceData[];
+    await user?.save({session:sess});
+    await sess.commitTransaction();
   }
   catch(error){
     return next(new HttpError('Something went wrong',500));

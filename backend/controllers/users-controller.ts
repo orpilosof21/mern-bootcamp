@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { inputErrorCheck } from "./controllerUtils";
 import { validationResult } from "express-validator";
 import User from "../models/user";
+import { IPlaceData } from "./places-controller";
 
 
 export interface IUserData {
@@ -10,6 +11,7 @@ export interface IUserData {
   name: string;
   email: string;
   password: string;
+  places?: IPlaceData[];
 }
 
 type IUserLoginData = Omit<IUserData, "id" | "name">;

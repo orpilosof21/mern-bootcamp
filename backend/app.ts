@@ -25,7 +25,7 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 //#endregion
-mongoose.connect('mongodb://localhost:27017/MERN?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false').then(() => {
+mongoose.connect('mongodb+srv://user_or:fNNeqpHT2tiACDDu@cluster0.xxjle.mongodb.net/myFirstDatabase?retryWrites=true&w=majority').then(() => {
   console.log('Connection to db is OK');
   app.listen(PORT);
 }).catch(err => {

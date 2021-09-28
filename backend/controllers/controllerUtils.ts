@@ -7,7 +7,10 @@ import { IUserData } from "./users-controller";
 
 type dataType = IPlaceData | IUserData;
 
-export function RemoveById(data: dataType[], toMatch: string) {
+export function RemoveById(data: dataType[] | undefined, toMatch: string) {
+  if (!data){
+    return [];
+  }
   return data.filter((p) => p.id !== toMatch);
 }
 
