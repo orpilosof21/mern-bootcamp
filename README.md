@@ -2,7 +2,7 @@
 
 #### Progress<br>
 
-![58](https://progress-bar.dev/58/)
+![68](https://progress-bar.dev/68/)
 <br>
 <br>
 
@@ -10,14 +10,10 @@
 
 - [x] Frontend
 - [x] Backend
-- [ ] Connecting db to Backend
+- [x] Connecting db to Backend
 - [ ] Connecting Backend to Frontend
 
 #### Extra features:
 
 - [ ] File Upload
 - [ ] Authentication
-
-#### Refactor:
-- [ ] Create User-Class and refactor to code
-- [ ] Create Place-Class and refactor to code
