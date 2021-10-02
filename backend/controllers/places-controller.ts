@@ -1,13 +1,15 @@
 import { HttpError } from "../models/http-error";
 import { Request, Response, NextFunction } from "express";
 import {
-  inputErrorCheck, RemoveById,
+  FilterByProp,
+  inputErrorCheck, RemoveById, RemoveByProp,
 } from "./controllerUtils";
 import { validationResult } from "express-validator";
 import { getLoactionForAddress } from "../util/location";
 import Place from "../models/place";
 import User from "../models/user";
-import mongoose from "mongoose";
+import mongoose, { Mongoose, MongooseDocument, PopulatedDoc, Types } from "mongoose";
+import {IUserData} from './users-controller';
 
 
 
@@ -22,10 +24,11 @@ export interface IPlaceData {
     lng: number;
   };
   address: string;
-  creator: string;
+  creator: PopulatedDoc<IUserData & Document>;
   image?: string;
 }
 
+ 
 type IPlaceUpdateData = Omit<IPlaceData, "location" | "address" | "creator">;
 
 
@@ -33,9 +36,6 @@ type IPlaceUpdateData = Omit<IPlaceData, "location" | "address" | "creator">;
 export async function getPlaceById(req: Request, res: Response, next: NextFunction) {
   const placeId = req.params.pid;
   let place;
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  console.log(placeId);
-
   try{
      
     place = await Place.findById(placeId);
@@ -180,12 +180,12 @@ export async function removePlaceById(
 
   const placeId = req.params.pid;
   try{
-    const place = await Place.findById(placeId).populate('creator');
+    const place = await Place.findById(placeId);
     const user = await User.findById(place?.creator);
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await place?.remove({session:sess});
-    user!.places = RemoveById(user?.places,place?.id) as IPlaceData[];
+    await place?.remove({ session: sess });
+    user?.places?.splice(user.places.findIndex(p => p.id===place?.id),1);
     await user?.save({session:sess});
     await sess.commitTransaction();
   }
@@ -193,5 +193,6 @@ export async function removePlaceById(
     return next(new HttpError('Something went wrong',500));
   }
   res.status(200).json({ message: "Delete place." });
+
 }
 //#endregion

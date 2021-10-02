@@ -40,6 +40,15 @@ export function FilterByProp(data: any[], toMatch: string, prop: string) {
   return Filter(data, (p) => p[prop] === toMatch);
 }
 
+export function RemoveByProp(data?: any[], toMatch?: string, prop='') {
+  if (!data || (prop && prop in data)) {
+    console.log(prop);
+    console.log(data);
+    throw new Error("Invalid prop");
+  }
+  return Filter(data, (p) => p[prop].toString() !== toMatch);
+}
+
 function Find(data: any[], predicate: (arg0: any) => boolean) {
   return data.find(predicate);
 }
