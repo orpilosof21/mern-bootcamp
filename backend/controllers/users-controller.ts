@@ -1,35 +1,35 @@
 import { HttpError } from "../models/http-error";
 import { Request, Response, NextFunction } from "express";
-import { FindByProp, inputErrorCheck } from "./controllerUtils";
-import { v4 as uuid_v4 } from "uuid";
+import { inputErrorCheck } from "./controllerUtils";
 import { validationResult } from "express-validator";
+import User from "../models/user";
+import { IPlaceData } from "./places-controller";
 
-const DUMMY_USERS: IUserData[] = [
-  {
-    id: "u1",
-    name: "Max Schwarz",
-    email: "test@test.com",
-    password: "testers",
-  },
-];
 
 export interface IUserData {
   id?: string;
   name: string;
   email: string;
   password: string;
+  places?: IPlaceData[];
 }
 
 type IUserLoginData = Omit<IUserData, "id" | "name">;
 
 //#region GET
-export function getUsersList(req: Request, res: Response, next: NextFunction) {
-  res.status(200).json({ users: DUMMY_USERS });
+export async function getUsersList(req: Request, res: Response, next: NextFunction) {
+  try{
+  const users = await User.find({}, '-password');
+  res.status(200).json({ users: users.map(u => u.toJSON({getters:true})) });
+  }
+  catch (err){
+    return next(new HttpError("Fetching users failed", 500));
+  }
 }
 //#endregion
 
 //#region  POST
-export function createAndLogUser(
+export async function signup(
   req: Request,
   res: Response,
   next: NextFunction
@@ -37,40 +37,47 @@ export function createAndLogUser(
   const errors = validationResult(req);
   inputErrorCheck(errors);
   const { ...reqData }: IUserData = req.body;
+  let identifiedUser;
 
-  const identifiedUser: IUserData = FindByProp(
-    DUMMY_USERS,
-    reqData.email,
-    "email"
-  );
+  try{
+  identifiedUser = await User.findOne({email: reqData.email});
+  }
+  catch (err){
+    return next(new HttpError('Something went wrong',500));
+  }
 
   if (identifiedUser) {
-    throw new HttpError("Could not create user, email already in use.", 422);
+    return next(new HttpError("Could not create user, email already in use.", 422));
   }
 
-  const createdUser: IUserData = {
-    id: uuid_v4().toString(),
-    name: reqData.name,
-    email: reqData.email,
-    password: reqData.password,
-  };
+  const createdUser = new User({
+    ...reqData,
+    image: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+  })
 
-  DUMMY_USERS.push(createdUser);
+  try{
+   await createdUser.save();
+    }
+    catch (err){
+      return next(new HttpError('Something went wrong',500));
+    }
 
-  res.status(201).json({ user: createdUser });
+  res.status(201).json({ user: createdUser.toObject({getters:true}) });
 }
 
-export function logInUser(req: Request, res: Response, next: NextFunction) {
+export async function logInUser(req: Request, res: Response, next: NextFunction) {
   const { ...reqData }: IUserLoginData = req.body;
-  const identifiedUser: IUserData = FindByProp(
-    DUMMY_USERS,
-    reqData.email,
-    "email"
-  );
+  let identifiedUser;
+  try{
+   identifiedUser= await User.findOne({email: reqData.email});
+  }
+  catch(err){
+    return next(new HttpError('Log in failed',500));
+  }
   if (!identifiedUser || identifiedUser.password !== reqData.password) {
-    throw new HttpError("Could not login user", 401);
+    return next(new HttpError("Could not login user", 401));
   }
 
-  res.json({ message: "Logged in!", user: identifiedUser });
+  res.json({ message: "Logged in!"});
 }
 //#endregion

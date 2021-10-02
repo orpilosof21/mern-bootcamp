@@ -7,7 +7,10 @@ import { IUserData } from "./users-controller";
 
 type dataType = IPlaceData | IUserData;
 
-export function RemoveById(data: dataType[], toMatch: string) {
+export function RemoveById(data: dataType[] | undefined, toMatch: string) {
+  if (!data){
+    return [];
+  }
   return data.filter((p) => p.id !== toMatch);
 }
 
@@ -35,6 +38,15 @@ export function FilterByProp(data: any[], toMatch: string, prop: string) {
     throw new Error("Invalid prop");
   }
   return Filter(data, (p) => p[prop] === toMatch);
+}
+
+export function RemoveByProp(data?: any[], toMatch?: string, prop='') {
+  if (!data || (prop && prop in data)) {
+    console.log(prop);
+    console.log(data);
+    throw new Error("Invalid prop");
+  }
+  return Filter(data, (p) => p[prop].toString() !== toMatch);
 }
 
 function Find(data: any[], predicate: (arg0: any) => boolean) {
