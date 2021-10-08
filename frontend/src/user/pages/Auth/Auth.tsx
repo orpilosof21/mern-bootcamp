@@ -11,6 +11,7 @@ import {
 } from "../../../shared/Utils/validators";
 import { useForm } from "../../../shared/hooks/form-hook";
 import { AuthContext } from "../../../shared/context/auth-context";
+import { getUsersRoutes } from "../../../shared/Utils/urlFetch";
 
 const Auth = () => {
   const auth = useContext(AuthContext);
@@ -50,8 +51,31 @@ const Auth = () => {
     setIsLoginMode((prevMode) => !prevMode);
   };
 
-  const authSubmitHandler = (event: React.FormEvent) => {
+  const authSubmitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (isLoginMode) {
+    } else {
+      try {
+        const res = await fetch(getUsersRoutes("signup"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+        console.log(res);
+        const resData = await res.json();
+        console.log(resData);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     auth.login();
   };
 
