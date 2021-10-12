@@ -34,6 +34,7 @@ export async function signup(
   res: Response,
   next: NextFunction
 ) {
+
   const errors = validationResult(req);
   inputErrorCheck(errors);
   const { ...reqData }: IUserData = req.body;
@@ -61,7 +62,6 @@ export async function signup(
     catch (err){
       return next(new HttpError('Something went wrong',500));
     }
-
   res.status(201).json({ user: createdUser.toObject({getters:true}) });
 }
 
