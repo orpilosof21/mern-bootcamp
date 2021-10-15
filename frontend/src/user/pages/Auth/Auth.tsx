@@ -14,12 +14,12 @@ import { AuthContext } from "../../../shared/context/auth-context";
 import { getUsersRoutes } from "../../../shared/Utils/urlFetch";
 import LoadingSpinner from "../../../shared/components/UIElements/LoadingSpinner/LoadingSpinner";
 import ErrorModal from "../../../shared/components/UIElements/ErrorModal";
+import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const httpClient = useHttpClient();
   const [formState, inputHandler, setFromData] = useForm(
     {
       email: {
@@ -59,45 +59,48 @@ const Auth = () => {
     event.preventDefault();
 
     if (isLoginMode) {
+      try {
+        await httpClient.sendRequest(
+          getUsersRoutes("login"),
+          "POST",
+          JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
+        );
+        auth.login();
+      } catch (err) {}
     } else {
       try {
-        setIsLoading(true);
-        const res = await fetch(getUsersRoutes("signup"), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        await httpClient.sendRequest(
+          getUsersRoutes("signup"),
+          "POST",
+          JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-        });
-        console.log(res);
-        const resData = await res.json();
-        if (!res.ok) {
-          throw new Error(resData.message);
-        }
-        setIsLoading(false);
+          {
+            "Content-Type": "application/json",
+          }
+        );
         auth.login();
-      } catch (err) {
-        console.log(err);
-        setIsLoading(false);
-        const { message } = err as Error;
-        setError(message);
-      }
+      } catch (err) {}
     }
   };
 
   const errorHandler = () => {
-    setError("");
+    httpClient.clearError();
   };
 
   return (
     <>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={httpClient.error} onClear={errorHandler} />
       <Card className="authentication">
-        {isLoading && <LoadingSpinner asOverlay />}
+        {httpClient.isLoading && <LoadingSpinner asOverlay />}
         <h2>Login Required</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>

@@ -28,7 +28,7 @@ function UserList(props: IUserListInput) {
           id={user.id}
           image={user.image}
           name={user.name}
-          placeCount={user.placeCount}
+          places={user.places}
         />
       ))}
     </ul>
