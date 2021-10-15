@@ -10,6 +10,7 @@ import "./PlaceItem.css";
 import { AuthContext } from "../../../shared/context/auth-context";
 
 export interface IPlaceItem {
+  _id?: string;
   id: string;
   image: string;
   title: string;
@@ -57,7 +58,6 @@ const PlaceItem = (props: IPlaceItem) => {
       </>
     ),
   };
-
   return (
     <React.Fragment>
       <Modal show={showMap} onCancel={closeMapHandler} {..._overlayData}>

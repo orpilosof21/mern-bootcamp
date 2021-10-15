@@ -60,7 +60,7 @@ const Auth = () => {
 
     if (isLoginMode) {
       try {
-        await httpClient.sendRequest(
+        const resData = await httpClient.sendRequest(
           getUsersRoutes("login"),
           "POST",
           JSON.stringify({
@@ -71,11 +71,11 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login();
+        auth.login(resData.user.id);
       } catch (err) {}
     } else {
       try {
-        await httpClient.sendRequest(
+        const resData = await httpClient.sendRequest(
           getUsersRoutes("signup"),
           "POST",
           JSON.stringify({
@@ -87,7 +87,7 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login();
+        auth.login(resData.user.id);
       } catch (err) {}
     }
   };
