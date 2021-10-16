@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IPlaceItem } from "../../components/PlaceItem/PlaceItem";
 import PlaceList from "../../components/PlaceList/PlaceList";
 import { useParams } from "react-router-dom";
@@ -25,6 +25,12 @@ const UserPlaces = () => {
     fetchPlaces();
   }, [httpClient.sendRequest, userId]);
 
+  const placeDeletedHandler = (delPlaceId: string) => {
+    setLoadedPlaces((prevPlaces) =>
+      prevPlaces.filter((p) => p.id !== delPlaceId)
+    );
+  };
+
   return (
     <>
       <ErrorModal error={httpClient.error} onClear={httpClient.clearError} />
@@ -34,7 +40,7 @@ const UserPlaces = () => {
         </div>
       )}
       {!httpClient.isLoading && loadedPlaces && (
-        <PlaceList items={loadedPlaces} />
+        <PlaceList items={loadedPlaces} onDelete={placeDeletedHandler} />
       )}
     </>
   );
