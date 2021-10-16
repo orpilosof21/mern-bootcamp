@@ -1,10 +1,21 @@
 import express, { Request, Response, NextFunction } from "express";
 import { routePrefix, routes } from "./routes/routesUtils";
 import { HttpError } from "./models/http-error";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 const app = express();
 const PORT = 8000;
+
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
 
 //#region valid routes
 app.use(routePrefix.PlacesRoute, routes.PlacesRoute);
@@ -25,10 +36,14 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 //#endregion
-mongoose.connect('mongodb+srv://user_or:fNNeqpHT2tiACDDu@cluster0.xxjle.mongodb.net/myFirstDatabase?retryWrites=true&w=majority').then(() => {
-  console.log('Connection to db is OK');
-  app.listen(PORT);
-}).catch(err => {
-  console.log(err);
-});
-
+mongoose
+  .connect(
+    "mongodb+srv://user_or:fNNeqpHT2tiACDDu@cluster0.xxjle.mongodb.net/mern?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("Connection to db is OK");
+    app.listen(PORT);
+  })
+  .catch((err) => {
+    console.log(err);
+  });

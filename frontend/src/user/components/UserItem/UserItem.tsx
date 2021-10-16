@@ -4,12 +4,13 @@ import { Link } from "react-router-dom";
 import "./UserItem.css";
 import Avatar from "../../../shared/components/UIElements/Avatar/Avatar";
 import Card from "../../../shared/components/UIElements/Card/Card";
+import { IPlaceItem } from "../../../places/components/PlaceItem/PlaceItem";
 
 export interface IUserItem {
   id: string;
   image: string;
   name: string;
-  placeCount: number;
+  places: IPlaceItem[];
 }
 
 function UserItem(props: IUserItem) {
@@ -23,7 +24,8 @@ function UserItem(props: IUserItem) {
           <div className="user-item__info">
             <h2>{props.name}</h2>
             <h3>
-              {props.placeCount} {props.placeCount === 1 ? "Place" : "Places"}
+              {props.places.length}{" "}
+              {props.places.length === 1 ? "Place" : "Places"}
             </h3>
           </div>
         </Link>

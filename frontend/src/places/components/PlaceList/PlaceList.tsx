@@ -7,6 +7,7 @@ import "./PlaceList.css";
 
 interface IPlaceList {
   items: IPlaceItem[];
+  onDelete: (arg0: string) => void;
 }
 
 const PlaceList = (props: IPlaceList) => {
@@ -20,19 +21,20 @@ const PlaceList = (props: IPlaceList) => {
       </div>
     );
   }
-
+  console.log(props);
   return (
     <ul className="place-list">
       {props.items.map((place) => (
         <PlaceItem
-          key={place.id}
-          id={place.id}
+          key={place._id}
+          id={place._id || ""}
           image={place.image}
           title={place.title}
           description={place.description}
           address={place.address}
           creatorId={place.creatorId}
           location={place.location}
+          onDelete={props.onDelete}
         />
       ))}
     </ul>

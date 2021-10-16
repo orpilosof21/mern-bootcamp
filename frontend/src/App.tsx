@@ -9,7 +9,7 @@ import {
 import Users from "./user/pages/Users";
 import NewPlace from "./places/pages/NewPlace/NewPlace";
 import MainNavigation from "./shared/components/Navigation/MainNavigation/MainNavigation";
-import UserPlaces from "./places/pages/UserPlaces";
+import UserPlaces from "./places/pages/UserPlace/UserPlaces";
 import UpdatePlace from "./places/pages/UpdatePlace/UpdatePlace";
 import Auth from "./user/pages/Auth/Auth";
 import { AuthContext } from "./shared/context/auth-context";
@@ -20,13 +20,16 @@ export interface IRouteParams {
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState("");
 
-  const login = useCallback(() => {
+  const login = useCallback((uid: string) => {
     setIsLoggedIn(true);
+    setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
+    setUserId("");
   }, []);
 
   let routes: JSX.Element;
@@ -67,7 +70,12 @@ const App = () => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+      value={{
+        isLoggedIn: isLoggedIn,
+        userId: userId,
+        login: login,
+        logout: logout,
+      }}
     >
       <Router>
         <MainNavigation />
