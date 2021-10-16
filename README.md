@@ -2,7 +2,7 @@
 
 #### Progress<br>
 
-![68](https://progress-bar.dev/68/)
+![77](https://progress-bar.dev/77/)
 <br>
 <br>
 
@@ -11,7 +11,7 @@
 - [x] Frontend
 - [x] Backend
 - [x] Connecting db to Backend
-- [ ] Connecting Backend to Frontend
+- [x] Connecting Backend to Frontend
 
 #### Extra features:
 
